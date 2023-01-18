@@ -41,7 +41,6 @@ class HomePage extends StatelessWidget {
               } else {
                 return const LoginView();
               }
-            // final emailVerified = user?.emailVerified ?? false;
             default:
               return const CircularProgressIndicator();
           }

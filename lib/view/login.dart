@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:first_app/main.dart';
 import 'package:first_app/view/notes_view.dart';
 import 'package:first_app/view/register_view.dart';
+import 'package:first_app/view/verify_email.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../firebase_options.dart';
@@ -65,9 +66,21 @@ class _LoginViewState extends State<LoginView> {
                 try {
                   await FirebaseAuth.instance.signInWithEmailAndPassword(
                       email: email, password: password);
-                  Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(builder: (context) => const NotesView()),
-                      (route) => false);
+                  final user = FirebaseAuth.instance.currentUser;
+                  if (user?.emailVerified ?? false) {
+                  // user email is verified  
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                            builder: (context) => const NotesView()),
+                        (route) => false);
+                  } else{
+                    //user email is NOT verified
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                            builder: (context) => const VerifyEmailView()),
+                        (route) => false);
+                  }
+
                 } on FirebaseAuthException catch (e) {
                   if (e.code == 'user-not-found') {
                     await showErrorDialog(context, "User not found");
@@ -81,7 +94,6 @@ class _LoginViewState extends State<LoginView> {
                 } catch (e) {
                   await showErrorDialog(context, e.toString());
                 }
-                ;
               },
               child: const Text('Sign in'),
             ),
