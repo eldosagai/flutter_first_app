@@ -1,4 +1,6 @@
+import 'package:first_app/utilities/show_error_dialog.dart';
 import 'package:first_app/view/login.dart';
+import 'package:first_app/view/verify_email.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:developer' as devtools show log;
@@ -61,28 +63,39 @@ class _RegisterViewState extends State<RegisterView> {
               onPressed: () async {
                 final email = _email.text;
                 final password = _password.text;
+
                 try {
-                  final userCredential = await FirebaseAuth.instance
+                  final userkek = await FirebaseAuth.instance
                       .createUserWithEmailAndPassword(
                           email: email, password: password);
-                  devtools.log(userCredential.toString());
+                  devtools.log(userkek.toString());
+                  final user = FirebaseAuth.instance.currentUser;
+                  await user?.sendEmailVerification();
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const VerifyEmailView()));
                 } on FirebaseAuthException catch (e) {
                   if (e.code == 'weak-password') {
-                    devtools.log("Weak password");
+                    await showErrorDialog(context, "Weak password");
                   } else if (e.code == 'email-already-in-use') {
-                    devtools.log("Email already in use");
+                    await showErrorDialog(context, "Email already in use");
                   } else if (e.code == 'invalid-email') {
-                    devtools.log("Invalid email");
+                    await showErrorDialog(context, "Invalid email");
+                  } else {
+                    await showErrorDialog(context, 'Error ${e.code}');
                   }
+                } catch (e) {
+                  await showErrorDialog(context, e.toString());
+                  devtools.log(e.toString());
                 }
               },
               child: const Text('Register'),
             ),
             TextButton(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return const LoginView();
-                  }));
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                          builder: ((context) => const LoginView())),
+                      (route) => false);
                 },
                 child: const Text("Already registered? Login here!"))
           ],

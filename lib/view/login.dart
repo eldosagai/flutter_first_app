@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:first_app/main.dart';
 import 'package:first_app/view/notes_view.dart';
 import 'package:first_app/view/register_view.dart';
 import 'package:flutter/material.dart';
@@ -64,10 +65,8 @@ class _LoginViewState extends State<LoginView> {
                 try {
                   await FirebaseAuth.instance.signInWithEmailAndPassword(
                       email: email, password: password);
-                  // ignore: use_build_context_synchronously
                   Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                          builder: (context) => const NotesView()),
+                      MaterialPageRoute(builder: (context) => const NotesView()),
                       (route) => false);
                 } on FirebaseAuthException catch (e) {
                   if (e.code == 'user-not-found') {
@@ -88,9 +87,10 @@ class _LoginViewState extends State<LoginView> {
             ),
             TextButton(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return const RegisterView();
-                  }));
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                          builder: ((context) => const RegisterView())),
+                      (route) => false);
                 },
                 child: const Text('Not registered? Register here'))
           ],
