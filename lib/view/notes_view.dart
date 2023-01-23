@@ -1,12 +1,10 @@
-// ignore_for_file: use_build_context_synchronously
 
-import 'package:firebase_core/firebase_core.dart';
-import 'package:first_app/view/login.dart';
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'dart:developer' as devtools show log;
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
-enum MenuAction { logout }
+import '../enums/mune_action.dart';
+import 'login.dart';
 
 class NotesView extends StatefulWidget {
   const NotesView({super.key});
@@ -76,3 +74,4 @@ Future<bool> showLogOutDialog(BuildContext context) {
     },
   ).then((value) => value ?? false);
 }
+

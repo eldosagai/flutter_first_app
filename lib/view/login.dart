@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:first_app/main.dart';
-import 'package:first_app/view/notes_view.dart';
+import 'package:first_app/enums/mune_action.dart';
 import 'package:first_app/view/register_view.dart';
 import 'package:first_app/view/verify_email.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +9,7 @@ import '../firebase_options.dart';
 import 'dart:developer' as devtools show log;
 
 import '../utilities/show_error_dialog.dart';
+import 'notes_view.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);

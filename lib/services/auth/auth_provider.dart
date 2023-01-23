@@ -2,6 +2,8 @@ import 'package:first_app/services/auth/auth_user.dart';
 import 'package:flutter/cupertino.dart';
 
 abstract class AuthProvider {
+  Future<void> initialize();
+
   AuthUser? get currentUser;
 
   Future<AuthUser> logIn({
