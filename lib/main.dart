@@ -1,6 +1,6 @@
 import 'package:first_app/services/auth/auth_service.dart';
 import 'package:first_app/view/login.dart';
-import 'package:first_app/view/notes_view.dart';
+import 'package:first_app/view/notes/notes_view.dart';
 import 'package:first_app/view/verify_email.dart';
 import 'package:flutter/material.dart';
 
