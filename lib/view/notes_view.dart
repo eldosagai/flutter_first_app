@@ -1,5 +1,5 @@
-
 import 'package:first_app/services/auth/auth_service.dart';
+import 'package:first_app/services/auth/crud/notes_services.dart';
 import 'package:flutter/material.dart';
 
 import '../enums/mune_action.dart';
@@ -13,23 +13,38 @@ class NotesView extends StatefulWidget {
 }
 
 class _NotesViewState extends State<NotesView> {
+  late final NotesService _notesService;
+
+  String get userEmail => AuthService.firebase().currentUser!.email!;
+
+  @override
+  void initState() {
+    _notesService = NotesService();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _notesService.close();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Center(child: Text("NotesView")),
+          title: const Center(child: Text("Main UI")),
           actions: [
             PopupMenuButton<MenuAction>(
               onSelected: (value) async {
                 switch (value) {
                   case MenuAction.logout:
                     final shouldLogout = await showLogOutDialog(context);
-                    if(shouldLogout){
+                    if (shouldLogout) {
                       await AuthService.firebase().logOut();
                       Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                          builder: (context) => const LoginView()
-                          ), 
+                          MaterialPageRoute(
+                              builder: (context) => const LoginView()),
                           (route) => false);
                     }
                     break;
@@ -46,7 +61,27 @@ class _NotesViewState extends State<NotesView> {
             )
           ],
         ),
-        body: const Center(child: const Text("Hello World")));
+        body: FutureBuilder(
+          future: _notesService.getOrCreateUser(email: userEmail),
+          builder: ((context, snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.done:
+                return StreamBuilder(
+                  stream: _notesService.allNotes,
+                  builder: ((context, snapshot) {
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        return const Text('Waiting for all notes');
+                      default:
+                        return const CircularProgressIndicator();
+                    }
+                  }),
+                );
+              default:
+                return const CircularProgressIndicator();
+            }
+          }),
+        ));
   }
 }
 
@@ -73,4 +108,3 @@ Future<bool> showLogOutDialog(BuildContext context) {
     },
   ).then((value) => value ?? false);
 }
-
